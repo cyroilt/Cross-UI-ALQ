@@ -26,6 +26,9 @@ class Window():
         elif type(self.background)==LinearGradient:
             self.background=LinearGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation)
             self.bg_color=self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
+        elif type(self.background)==RadialGradient:
+            self.background=RadialGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation,center=self.background.center)
+            self.bg_color=self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
         self.backdrop.place(x=0,y=0)
         self.window.bind("<Configure>",self.__on__RESIZE)
     def __add_child__(self, child):
@@ -47,7 +50,10 @@ class Window():
                 self.background=LinearGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation)
                 self.backdrop.delete(self.bg_color)
                 self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
-
+            elif type(self.background)==RadialGradient:
+                self.background=RadialGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation,center=self.background.center)
+                self.backdrop.delete(self.bg_color)
+                self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
 class Menu():
     def __init__(self, window: Window, style=Style().stylemap("Menu")):
         self.menu = tk.Menu()

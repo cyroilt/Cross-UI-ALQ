@@ -46,7 +46,34 @@ class GIFAnimation():
 
     def stop_animation(self, partofanim):
         partofanim.after_cancel(self.loop)
-@numba.jit(fastmath=True,cache=True,parallel=True)
+#@numba.jit(fastmath=True,cache=True,parallel=True)
+def fast_render_radial(height, width,rotation,sorted_points,color_points,gradient,center):
+        max_dist = np.sqrt(center[0]**2 + center[1]**2)
+        # Precompute trigonometric values
+        y, x = np.ogrid[:height, :width]
+        x = x - center[0]
+        y = y - center[1]
+
+        # Calculate the distance from the center
+        dist = np.sqrt(x**2 + y**2) / max_dist
+
+        # Initialize the gradient array
+        
+
+        # Interpolate colors
+        for i in range(len(sorted_points) - 1):
+            p1, p2 = sorted_points[i], sorted_points[i + 1]
+            c1, c2 = color_points[p1], color_points[p2]
+            
+            mask = (dist >= p1) & (dist <= p2)
+            t = (dist[mask] - p1) / (p2 - p1)
+            
+            gradient[mask, 0] = (c1[0] + t * (c2[0] - c1[0])).astype(np.uint8)
+            gradient[mask, 1] = (c1[1] + t * (c2[1] - c1[1])).astype(np.uint8)
+            gradient[mask, 2] = (c1[2] + t * (c2[2] - c1[2])).astype(np.uint8)
+            gradient[mask, 3] = (c1[3] + t * (c2[3] - c1[3])).astype(np.uint8)
+        return gradient
+#@numba.jit(fastmath=True,cache=True,parallel=True)
 def fast_render(height, width,rotation,sorted_points,color_points,pixels):
     
     # Precompute trigonometric values
@@ -90,9 +117,7 @@ def fast_render(height, width,rotation,sorted_points,color_points,pixels):
         pixels[..., 1] = g
         pixels[..., 2] = b
         pixels[..., 3] = a
-        return pixels
-   
-    
+        return pixels  
 class LinearGradient():
 
     
@@ -104,11 +129,26 @@ class LinearGradient():
         self.color_points=colors
         self.sorted_points = sorted(self.color_points.keys())
         self.img = im.new("RGBA", (self.width, self.height))
-        self.pixels = np.array(self.img)
+        self.pixels = np.zeros((self.height, self.width, 4), dtype=np.uint8)
 
         # Create an image from the array
         self.img = im.fromarray(fast_render(self.height,self.width,self.rotation,self.sorted_points,self.color_points,self.pixels), "RGBA")
     def add_to_canvas(self):
         self.upper=imtk.PhotoImage(self.img)
         return self.upper
-        
+class RadialGradient():
+    def __init__(self, colors={0:(0,0,0,255),100:(255,255,255,255)},size=(300,300),rotation=0,center=(150,150)):
+        self.size=size
+        self.rotation=rotation
+        self.center=center
+        self.width=size[0]
+        self.height=size[1]
+        self.color_points=colors
+        self.sorted_points = sorted(self.color_points.keys())
+        self.img = im.new("RGBA", (self.width, self.height))
+        self.pixels = np.array(self.img)
+        # Create an image from the array
+        self.img = im.fromarray(fast_render_radial(self.height,self.width,self.rotation,self.sorted_points,self.color_points,self.pixels,self.center), "RGBA")
+    def add_to_canvas(self):
+        self.upper=imtk.PhotoImage(self.img)
+        return self.upper       
