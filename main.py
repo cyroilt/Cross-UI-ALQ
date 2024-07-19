@@ -1,6 +1,6 @@
 from Widgets import Window
 #установка PIL через wheel в академии pip install --force-reinstall C:\путь_до_файла\pillow-10.4.0-cp38-cp38-win_amd64.whl
-main = Window.Window(background=Window.Color(color=(29,230,132,90)))
+main = Window.Window(background=Window.LinearGradient(colors={0:(253,222,210,200),0.5:(100,230,12,100),1:(255,0,0,255)},size=(250,250),rotation=0))
 mainMenu = Window.Menu(main)
 fileSubMenu = Window.Menu(main)
 minifs = Window.SubMenu(fileSubMenu,name="New")
