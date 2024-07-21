@@ -46,14 +46,17 @@ class Window():
                 self.background=Color(size_of_area=(self.window.winfo_width(),self.window.winfo_height()),color=self.background.__color__)
                 self.backdrop.delete(self.bg_color)
                 self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
+                self.backdrop.tag_lower(self.bg_color)
             elif type(self.background)==LinearGradient:
                 self.background=LinearGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation)
                 self.backdrop.delete(self.bg_color)
                 self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
+                self.backdrop.tag_lower(self.bg_color)
             elif type(self.background)==RadialGradient:
                 self.background=RadialGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation,center=self.background.center)
                 self.backdrop.delete(self.bg_color)
                 self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
+                self.backdrop.tag_lower(self.bg_color)
 class Menu():
     def __init__(self, window: Window, style=Style().stylemap("Menu")):
         self.menu = tk.Menu()
