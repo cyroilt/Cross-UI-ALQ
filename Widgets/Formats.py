@@ -3,10 +3,13 @@ import tkinter as tk
 from PIL import Image as im
 from PIL import ImageTk as imtk
 import numba
+from PIL import ImageFont
+from PIL import ImageDraw as imgdw
 import numpy as np
 class Color():
     def __init__(self, size_of_area=(0, 0), color=(0, 0, 0, 0)):
         self.__color__=color
+        self.size=size_of_area
         self.color = im.new("RGBA", size=size_of_area, color=color)
 
     def add_to_canvas(self):
@@ -152,3 +155,34 @@ class RadialGradient():
     def add_to_canvas(self):
         self.upper=imtk.PhotoImage(self.img)
         return self.upper       
+
+class Foreground():
+    def __init__(self, text=None, maker=None, for_object=None,font=("arial",20)):
+        self.text = text
+        self.alphamask = maker
+        self.objectTo = for_object
+        self.fontn=f"{font[0]}.ttf"
+        self.font=ImageFont.truetype(self.fontn,float(font[1]))
+        if self.text != None:
+            if type(self.objectTo) == Color:
+
+                self.text_img = im.new("L", self.objectTo.color.size, 0)
+                self.test_img_draw=imgdw.Draw(self.text_img)
+                self.txtsz = self.test_img_draw.textbbox((0,0),self.text,font=self.font)
+                self.test_img_draw.text(((self.objectTo.color.size[0]-self.txtsz[2])/2,(self.objectTo.color.size[1]-self.txtsz[3])/2),self.text,fill=255,font=self.font)
+                self.new_object = self.objectTo.color.copy()
+                self.new_object.putalpha(self.text_img)
+
+                print(self.new_object)
+            elif type(self.objectTo) == LinearGradient or type(self.objectTo) == RadialGradient:
+                self.text_img = im.new("L", self.objectTo.img.size, 0)
+                self.test_img_draw = imgdw.Draw(self.text_img)
+                self.txtsz=self.test_img_draw.textbbox((0,0),self.text,font=self.font)
+                self.test_img_draw.text(((self.objectTo.img.size[0]-self.txtsz[2])/2,(self.objectTo.img.size[1]-self.txtsz[3])/2), self.text, fill=255,font=self.font)
+                self.new_object = self.objectTo.img.copy()
+                self.new_object.putalpha(self.text_img)
+        else:
+            pass
+    def add_to_canvas(self):
+        self.upper = imtk.PhotoImage(self.new_object)
+        return self.upper

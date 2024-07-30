@@ -19,7 +19,9 @@ mouse_events={"left-click":"<Button-1>",
               "left-motion":"<B1-Motion>",
               "middle-motion":"<B2-Motion>",
               "right-motion":"<B3-Motion>",
-              "wheel":"<MouseWheel>"}
+              "wheel":"<MouseWheel>",
+              "enter":"<Enter>",
+              "leave":"<Leave>"}
 event_names={
     "click":"<Button-1>",
     "double_click":"<Double-1>",

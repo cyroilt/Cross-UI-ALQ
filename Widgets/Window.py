@@ -1,5 +1,8 @@
 from .Formats import *
-
+import sys
+import os 
+sys.path.append(os.getcwd())
+from .UI import AnimationPlayer
 
 class Style():
     def __init__(self):
@@ -10,10 +13,15 @@ class Style():
 
 
 class Window():
-    def __init__(self, name="MainWindow", background=Color(size_of_area=(800, 600), color=(255, 255, 255, 255))):
+    def __init__(self, name="MainWindow", background=Color(size_of_area=(800, 600), color=(255, 255, 255, 255)),size=(800, 600), fit="none"):
         self.window = tk.Tk()
         self.name = name
+        self.size=size
+        self.fit=fit
+        self.__get_root__=self
+        self.__animation__player__=AnimationPlayer()
         self.background=background
+        self.window.geometry(f"{size[0]}x{size[1]}")
         self.projectTree = {"name": self.name, "children": [], "object": self.window}
         self.backdrop = tk.Canvas(self.window,width=self.window.winfo_reqwidth(),bd=0,height=self.window.winfo_reqheight(),background="white")
         self.background = background
@@ -33,6 +41,8 @@ class Window():
         self.window.bind("<Configure>",self.__on__RESIZE)
     def __add_child__(self, child):
         self.projectTree["children"].append(child)
+    def __remove_child__(self,child):
+        self.projectTree["children"].remove(child)
     def __on__RESIZE(self,event):
         if event.width!=self.last_ev_width or event.height!=self.last_ev_height:
             self.last_ev_width = event.width
@@ -57,6 +67,19 @@ class Window():
                 self.backdrop.delete(self.bg_color)
                 self.bg_color = self.backdrop.create_image(self.window.winfo_width()//2,self.window.winfo_height()//2, image=self.background.add_to_canvas())
                 self.backdrop.tag_lower(self.bg_color)
+    def configure(self,name="MainWindow", background=Color(size_of_area=(800, 600), color=(255, 255, 255, 255))):
+        self.name = name
+        self.background=background
+        self.window.title(name)
+        if type(self.background)==Color:
+            self.background=Color(size_of_area=(self.window.winfo_width(),self.window.winfo_height()),color=self.background.__color__)
+            self.backdrop.itemconfigure(self.bg_color,image=self.background.add_to_canvas())
+        elif type(self.background)==LinearGradient:
+            self.background=LinearGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation)
+            self.backdrop.itemconfigure(self.bg_color,image=self.background.add_to_canvas())
+        elif type(self.background)==RadialGradient:
+            self.background=RadialGradient(size=(self.window.winfo_width(),self.window.winfo_height()),colors=self.background.color_points,rotation=self.background.rotation)
+            self.backdrop.itemconfigure(self.bg_color,image=self.background.add_to_canvas())
 class Menu():
     def __init__(self, window: Window, style=Style().stylemap("Menu")):
         self.menu = tk.Menu()

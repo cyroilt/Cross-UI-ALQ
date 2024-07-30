@@ -7,8 +7,10 @@ version= core_version.UI_VERSION.UX_version.widget_version
 
 # version 0.0.0.5
 
-* 1. Added Events System
-* 2. Added Some of Inputs
+* 1. Added Partially Events System(Mouse events)
+* 2. Added configure function for the window
+* 3. Added Label Foreground Feature (in test, in future it will be added in other widgets)
+* 4. Added Animation Feature working with colors(in test, in future it will be added for other parameters) 
 # FOURTH COMMIT CHANGES version 0.0.0.4:
 * 1. Added Button Functionality
 * 2. Added Label

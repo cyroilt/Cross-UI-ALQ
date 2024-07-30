@@ -4,7 +4,7 @@ import sys
 
 sys.path.append("...")
 sys.path.append("..")  # Add current directory to PYTHONPATH for importing modules
-from Cross_UI_ALQ import Events
+from . import Events
 from . import Formats as formater
 from . import Window as windows
 from PIL import Image as img
@@ -16,6 +16,7 @@ class Button():
         self.style=style
         self.background=background
         self.text=text
+        self.__get_root__=window.__get_root__
         self.size=size
         self.canvas=self.window.backdrop
         self.position=position
@@ -42,13 +43,15 @@ class Button():
             self.size=size
         if position!=None:
             self.position=position
+        else:
+            self.position=self.position
         if onclick!=None:
             self.onclick=onclick
         
         self.canvas.itemconfig(self.but_background,image=self.background.add_to_canvas())
         self.canvas.moveto(self.but_background,self.position[0],self.position[1])
         self.canvas.itemconfig(self.text_but,text=self.text)
-        self.canvas.moveto(self.text_but,self.position[0],self.position[1])
+        self.canvas.moveto(self.text_but,self.position[0]+self.size[0]/3,self.position[1]+self.size[1]/3)
         for i in self.events:
             ev_name=i.event_name
             ev_command=i.command
